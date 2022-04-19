@@ -59,5 +59,9 @@ public class User extends BaseEntity {
         //myVideo.setUser(this);
         this.myVideos.add(myVideo);
     }
+    public User update(String name){
+        this.nickname = name;
+        return this;
+    }
 
 }
