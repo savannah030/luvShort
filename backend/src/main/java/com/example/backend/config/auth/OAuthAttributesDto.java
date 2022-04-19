@@ -11,15 +11,13 @@ public class OAuthAttributesDto {
     private String nameAttributeKey;
     private String memberName;
     private String email;
-    private String picture;
 
     @Builder
-    public OAuthAttributesDto(Map<String, Object> attributes, String nameAttributeKey, String memberName, String email, String picture) {
+    public OAuthAttributesDto(Map<String, Object> attributes, String nameAttributeKey, String memberName, String email) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.memberName = memberName;
         this.email = email;
-        this.picture = picture;
     }
 
     /**
@@ -38,7 +36,6 @@ public class OAuthAttributesDto {
                 .nameAttributeKey(nameAttributeKey)
                 .memberName( (String) attributes.get("name"))
                 .email( (String) attributes.get("email"))
-                .picture( (String) attributes.get("picture"))
                 .build();
     }
 
