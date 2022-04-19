@@ -1,5 +1,6 @@
 package com.example.backend.config.auth;
 
+import com.example.backend.domain.user.User;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -39,7 +40,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userNameAttributeKey = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); //2.
         OAuthAttributesDto attributes = OAuthAttributesDto.of(registrationId, userNameAttributeKey, oAuth2User.getAttributes()); //3.
 
+        // 속성값 가지고 User 엔티티 업데이트
+        User user = saveOrUpdate(attributes);
         return null;
+    }
+
+    private User saveOrUpdate(OAuthAttributesDto attributes){
+        User user = userRepository.findByEmail(attributes.getEmail())
+                // 이미 가입한 사용자이면(해당 이메일을 쓰는 사용자가 있으면) 엔티티 업데이트
+                .map(entity -> entity.update(attributes.getMemberName()))
+                // 그렇지 않으면 속성값으로 새로운 엔티티 생성
+                .orElse(attributes.toEntity());
+
+        return userRepository.save(user);
+
     }
 
 }
