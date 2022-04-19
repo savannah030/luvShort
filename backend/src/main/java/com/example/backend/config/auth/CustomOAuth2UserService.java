@@ -3,14 +3,17 @@ package com.example.backend.config.auth;
 import com.example.backend.domain.user.User;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 
 // NOTE: OAuth2UserService를 구현한 CustomOAuth2UserService 클래스는
 //  구글 로그인 이후 가져온 사용자의 정보(이름, email주소, 사진)들을 기반으로
@@ -42,7 +45,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // 속성값 가지고 User 엔티티 업데이트
         User user = saveOrUpdate(attributes);
-        return null;
+
+        // SessionMemberDto : 세션에 사용자 정보 저장할 dto 클래스
+        httpSession.setAttribute("user", new SessionMemberDto(user));
+
+        return new DefaultOAuth2User(
+                Collections.singleton(
+                        new SimpleGrantedAuthority(user.getRoleType().getKey())),
+                attributes.getAttributes(),
+                attributes.getNameAttributeKey());
     }
 
     private User saveOrUpdate(OAuthAttributesDto attributes){
