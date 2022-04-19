@@ -1,5 +1,7 @@
 package com.example.backend.config.auth;
 
+import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.enums.RoleType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -36,6 +38,15 @@ public class OAuthAttributesDto {
                 .nameAttributeKey(nameAttributeKey)
                 .memberName( (String) attributes.get("name"))
                 .email( (String) attributes.get("email"))
+                .build();
+    }
+
+    // 해당 이메일로 가입되지 않은 경우 User 엔티티 새로 생성
+    public User toEntity(){
+        return User.builder()
+                .nickname(memberName)
+                .email(email)
+                .roleType(RoleType.NORMAL)
                 .build();
     }
 
