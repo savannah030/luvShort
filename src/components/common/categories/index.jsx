@@ -2,10 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import { AddCategoryBtn } from "../button";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-const Categories = ({ marginTop, setCurrentCategory }) => {
+import { CategoryBackgroundColor } from "@/utils/interestColor";
+
+export const Cateogories = ({ category }) => {
+  return (
+    <CategoryLi color={CategoryBackgroundColor.category}>
+      #{category}
+    </CategoryLi>
+  );
+};
+
+export const MainCategory = ({ marginTop, setCurrentCategory }) => {
   const user = useSelector(({ user }) => user.user);
-  const interests = useSelector(({ user }) => user.interest);
+  const interests = useSelector(({ user }) => user.interests);
 
   const handleShowCategory = ({ target }) => {
     setCurrentCategory(target.value);
@@ -15,23 +26,23 @@ const Categories = ({ marginTop, setCurrentCategory }) => {
     <StyledCategory marginTop={marginTop}>
       <ul>
         {user ? {} : <></>}
-        {/* {interests?.map(({ link, title, color }) => (
-          <CategoryLi key={title} color={color}>
-            <Link to={link}>#{title}</Link>
-          </CategoryLi>
-        ))} */}
+        {interests ? (
+          interests.map((interest) => (
+            <Cateogories key={interest} category={interest} />
+          ))
+        ) : (
+          <></>
+        )}
       </ul>
       <CategorySelect onChange={handleShowCategory}>
         <option value="전체">전체</option>
-        <option value="여자">여자</option>
-        <option value="남자">남자</option>
+        <option value="여성">여자</option>
+        <option value="남성">남자</option>
         <option value="우리동네">우리동네</option>
       </CategorySelect>
     </StyledCategory>
   );
 };
-
-export default Categories;
 
 const StyledCategory = styled.div`
   margin-top: ${(props) => props.marginTop};
